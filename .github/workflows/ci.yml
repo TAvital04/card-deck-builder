@@ -1,0 +1,61 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    name: Test Backend & Build Frontend
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      # Backend Tests
+      - name: Check Backend Directory
+        id: check_backend
+        run: |
+          if [ -d "backend" ]; then echo "exists=true" >> $GITHUB_OUTPUT; else echo "exists=false" >> $GITHUB_OUTPUT; fi
+
+      - name: Install Backend Dependencies
+        if: steps.check_backend.outputs.exists == 'true'
+        working-directory: ./backend
+        run: npm ci || npm install
+
+      - name: Run Backend Math & Analytical Unit Tests
+        if: steps.check_backend.outputs.exists == 'true'
+        working-directory: ./backend
+        run: npm test --if-present
+
+      # Frontend Build Verification
+      - name: Check Frontend Directory
+        id: check_frontend
+        run: |
+          if [ -d "frontend" ]; then echo "exists=true" >> $GITHUB_OUTPUT; else echo "exists=false" >> $GITHUB_OUTPUT; fi
+
+      - name: Install Frontend Dependencies
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: ./frontend
+        run: npm ci || npm install
+
+      - name: Build Frontend Application
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: ./frontend
+        run: npm run build --if-present

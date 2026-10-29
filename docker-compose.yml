@@ -1,0 +1,38 @@
+services:
+  # MongoDB 7.0 Database Container
+  mongodb:
+    image: mongo:7.0
+    container_name: deckbuilder-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: deckbuilder
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - deckbuilder-network
+
+  # Web-Based Database Management UI (Zero-install alternative to Compass)
+  mongo-express:
+    image: mongo-express:1.0.2-20
+    container_name: deckbuilder-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+    networks:
+      - deckbuilder-network
+
+volumes:
+  mongo-data:
+
+networks:
+  deckbuilder-network:
+    driver: bridge
