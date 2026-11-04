@@ -39,16 +39,13 @@ test('3. calculateSingleCardProbability validates standard 40-card deck (3 copie
 });
 
 test('4. calculateTwoCardComboProbability accurately calculates bivariate 2-card opening hand combos', () => {
-  // 40-card deck, 3 copies of Starter A, 3 copies of Extender B, 5-card hand
   const combo = calculateTwoCardComboProbability(40, 3, 3, 5, 1, 1);
 
-  // By Inclusion-Exclusion: P(A>=1 ^ B>=1) = 1 - P(A=0) - P(B=0) + P(A=0 ^ B=0)
-  // P(A=0) = C(37,5)/C(40,5), P(A=0 ^ B=0) = C(34,5)/C(40,5)
   const pA0 = combinations(37, 5) / combinations(40, 5);
   const pB0 = pA0;
   const pBoth0 = combinations(34, 5) / combinations(40, 5);
-  const expected = 1 - pA0 - pB0 + pBoth0; // ~0.107795 -> 10.78%
+  const expected = 1 - pA0 - pB0 + pBoth0; // ~0.09798 -> 9.80%
 
   assert.ok(Math.abs(combo.probability - expected) < 1e-9);
-  assert.equal(combo.percentage, 10.78);
+  assert.equal(combo.percentage, 9.8); // <-- Updated from 10.78 to 9.8
 });
