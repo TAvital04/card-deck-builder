@@ -92,7 +92,7 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
     const message = typeof body?.message === 'string'
       ? body.message
       : response.status === 404
-        ? `API endpoint not found (${path}). Confirm the backend mounts /api/auth.`
+        ? `API endpoint not found (${path}). Confirm that Express mounted this route.`
         : `Request failed (${response.status}).`;
     throw new ApiError(message, response.status);
   }
@@ -123,4 +123,94 @@ export const authApi = {
   me() {
     return apiRequest<AuthResponse>('/auth/me');
   },
+};
+
+/** Turn 8 API contracts match the current Express controllers and Mongoose Deck model. */
+export type CardGame = 'Yu-Gi-Oh!' | 'MTG';
+
+export interface DeckCard {
+  _id?: string;
+  name: string;
+  count: number;
+  category?: string;
+  role?: string;
+  notes?: string;
+}
+
+export interface Deck {
+  _id: string;
+  name: string;
+  game: CardGame;
+  cards: DeckCard[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DeckPayload {
+  name: string;
+  game: CardGame;
+  cards: DeckCard[];
+}
+
+interface DataResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+export interface SearchCard {
+  _id: string;
+  name: string;
+  game?: string;
+  category?: string;
+  role?: string;
+  description?: string;
+}
+
+export interface CardSearchResponse extends DataResponse<SearchCard[]> {
+  count: number;
+}
+
+export interface SingleProbabilityResult {
+  atLeastDesired: number;
+  atLeastDesiredPct: number;
+  exactDesired: number;
+  exactDesiredPct: number;
+  zeroCopiesPct: number;
+  distribution: { copies: number; probability: number; percentage: number }[];
+}
+
+export interface ComboProbabilityResult {
+  probability: number;
+  percentage: number;
+}
+
+function jsonRequest<T>(path: string, method: 'POST' | 'PUT', payload: object): Promise<T> {
+  return apiRequest<T>(path, { method, body: JSON.stringify(payload) });
+}
+
+export const deckApi = {
+  list: () => apiRequest<DataResponse<Deck[]>>('/decks'),
+  get: (id: string) => apiRequest<DataResponse<Deck>>(`/decks/${encodeURIComponent(id)}`),
+  create: (deck: DeckPayload) => jsonRequest<DataResponse<Deck>>('/decks', 'POST', deck),
+  update: (id: string, deck: DeckPayload) => jsonRequest<DataResponse<Deck>>(`/decks/${encodeURIComponent(id)}`, 'PUT', deck),
+  remove: (id: string) => apiRequest<{ success: boolean; message: string }>(`/decks/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  exportText: (id: string) => apiRequest<DataResponse<string>>(`/decks/${encodeURIComponent(id)}/export`),
+};
+
+export const cardApi = {
+  // The backend performs case-insensitive substring matching; AbortSignal prevents stale responses.
+  search: (query: string, signal?: AbortSignal) => {
+    // Current server uses query text directly in $regex; escape syntax characters
+    // so a typed name is treated as a literal substring (e.g. 'C++').
+    const literal = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return apiRequest<CardSearchResponse>(`/cards/search?query=${encodeURIComponent(literal)}`, { signal });
+  },
+};
+
+export const calcApi = {
+  single: (parameters: { deckSize: number; targetCopies: number; drawSize: number; minDesired: number }) =>
+    jsonRequest<DataResponse<SingleProbabilityResult>>('/calc/single', 'POST', parameters),
+  combo: (parameters: { deckSize: number; copiesA: number; copiesB: number; drawSize: number; minA: number; minB: number }) =>
+    jsonRequest<DataResponse<ComboProbabilityResult>>('/calc/combo', 'POST', parameters),
 };
