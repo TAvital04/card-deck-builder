@@ -1,0 +1,40 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TCG Deck Builder API",
+    "version": "1.0.0",
+    "description": "API for COP 4331 Deck Builder & Probability Calculator"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/cards/search": {
+      "get": {
+        "summary": "Search cards by partial name match",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful search" }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Check API health status",
+        "responses": {
+          "200": { "description": "API is online" }
+        }
+      }
+    }
+  }
+}
