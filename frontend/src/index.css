@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-synthesis: none;
+  color: #242424;
+  background: #f7f7f8;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  /* Round 1 design tokens — quiet, neutral surfaces and borders. */
+  --surface: #ffffff;
+  --canvas: #f7f7f8;
+  --ink: #242424;
+  --ink-muted: #85858e;
+  --border: #e5e5e9;
+  --border-strong: #d7d8dd;
+  --focus: #777984;
+  --radius: 8px;
+  --radius-modal: 13px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --transition: 200ms var(--ease);
+  --shadow: 0 18px 55px rgba(31, 31, 36, .10);
+}
+
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; margin: 0; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .66; }
+a { color: inherit; text-decoration: none; }
+button:focus-visible, input:focus-visible, a:focus-visible {
+  outline: 3px solid rgba(90, 90, 98, .25);
+  outline-offset: 3px;
+}
+.container { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* Navbar is the only page content outside the authentication dialog. */
+.site-header { background: #fff; border-bottom: 1px solid var(--border); }
+.navbar { min-height: 72px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; letter-spacing: -.4px; }
+.brand-mark { background: #252525; color: #fff; border-radius: 8px; width: 33px; height: 33px; display: inline-grid; place-items: center; font-size: 19px; }
+.navbar-actions { display: flex; align-items: center; gap: 10px; }
+.nav-greeting { font-size: 12px; color: var(--ink-muted); }
+.auth-stage { flex: 1; background: var(--canvas); }
+
+.button {
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+}
+.button:not(:disabled):hover { transform: translateY(-1px); }
+.button:not(:disabled):active { transform: translateY(0); }
+.button-small { padding: 10px 14px; font-size: 12px; }
+.button-primary { background: #242424; border-color: #242424; color: #fff; }
+.button-primary:hover:not(:disabled) { background: #424242; border-color: #424242; box-shadow: 0 4px 12px rgba(36,36,36,.12); }
+.button-outline { background: #fff; border-color: var(--border-strong); color: var(--ink); }
+.button-outline:hover:not(:disabled) { background: #f4f4f5; }
+.button-text { color: var(--ink); background: transparent; }
+.button-text:hover:not(:disabled) { background: #f4f4f5; }
+
+/* Minimal centered authentication modal. */
+.modal-backdrop {
+  position: fixed;
+  /* Keep the navbar visible, as in the requested minimal mockup. */
+  inset: 72px 0 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+  background: var(--canvas);
+  animation: fade-in var(--transition) both;
+}
+.auth-modal {
+  position: relative;
+  width: min(100%, 395px);
+  padding: 30px 29px 26px;
+  margin: auto;
+  border-radius: var(--radius-modal);
+  border: 1px solid var(--border);
+  background: #fff;
+  box-shadow: var(--shadow);
+  animation: rise-in 240ms var(--ease) both;
+}
+.modal-close {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #8b8e96;
+  font-size: 22px;
+  line-height: 1;
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+}
+.modal-close:hover { background: #f4f4f6; color: #242424; transform: rotate(90deg); }
+.modal-heading { text-align: center; margin-bottom: 24px; }
+.eyebrow { font: 500 10px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 1.4px; color: #9c9ca4; }
+.eyebrow-centered { text-align: center; }
+.modal-heading h2 { margin: 15px 0 8px; font-size: 24px; font-weight: 700; letter-spacing: -.9px; }
+.modal-heading .modal-subtitle { font-size: 12px; color: var(--ink-muted); line-height: 1.6; margin: 0; }
+/* Email verification: restrained icon, short centered copy and a quiet resend action. */
+.modal-heading-verify { margin-bottom: 23px; }
+.verify-icon-badge {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 15px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f3f3f5;
+  border: 1px solid #e7e7eb;
+  color: #4d5159;
+}
+.modal-heading-verify h2 { margin-top: 0; }
+.modal-heading-verify > p { max-width: 305px; margin-inline: auto; }
+.modal-heading .verify-recipient { margin: 9px 0 0; font-size: 11px; line-height: 1.5; color: #565962; overflow-wrap: anywhere; }
+.verify-recipient .inline-link { margin-left: 4px; }
+.verify-resend { margin-top: 18px; font-size: 11px; text-align: center; color: var(--ink-muted); }
+.verify-resend .inline-link:disabled { opacity: .55; cursor: wait; }
+.verify-resend + .modal-footer { margin-top: 15px; }
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label { font-size: 11px; font-weight: 600; color: #45454a; }
+.label-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.field input {
+  width: 100%;
+  height: 43px;
+  padding: 0 12px;
+  color: var(--ink);
+  font-size: 12px;
+  border: 1px solid #dcdee3;
+  border-radius: var(--radius);
+  background: #fff;
+  transition: border var(--transition), box-shadow var(--transition);
+}
+.field input::placeholder { color: #a7a9b2; }
+.field input:hover { border-color: #b8b9c0; }
+.field input:focus { outline: none; border-color: #858790; box-shadow: 0 0 0 3px rgba(111,113,123,.10); }
+.field input:not(:placeholder-shown):invalid { border-color: #c78e8e; }
+.inline-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #303038;
+  text-decoration: underline;
+  text-decoration-color: #c7c9ce;
+  text-underline-offset: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color var(--transition);
+}
+.inline-link:hover { color: #777986; }
+.button-submit { height: 44px; width: 100%; margin-top: 6px; font-size: 12px; }
+.form-message { border-radius: 7px; padding: 11px 12px; font-size: 11px; line-height: 1.6; margin: 0; }
+.form-error { background: #fff5f4; border: 1px solid #f2d7d4; color: #9c3a32; }
+.form-success { background: #f3faf4; border: 1px solid #d3ead7; color: #356847; }
+.modal-footer { display: flex; justify-content: center; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 20px; color: var(--ink-muted); font-size: 11px; }
+.secondary-link-row { flex-basis: 100%; text-align: center; margin-top: 10px; }
+.subtle-link { color: #777; font-weight: 500; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 520px) {
+  .container { width: min(100% - 28px, 1120px); }
+  .navbar { min-height: 64px; }
+  .brand { font-size: 12px; gap: 7px; }
+  .brand-mark { width: 28px; height: 28px; font-size: 16px; }
+  .navbar-actions { gap: 4px; }
+  .button-small { padding: 9px 10px; }
+  .nav-greeting { display: none; }
+  .auth-modal { padding: 27px 21px 23px; }
+  .modal-backdrop { top: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Small unobtrusive status shown while the saved JWT is being checked. */
+.session-status {
+  margin: 22px auto;
+  width: fit-content;
+  color: var(--ink-muted);
+  font: 500 11px 'JetBrains Mono', ui-monospace, monospace;
+}
+.verify-resend .inline-link:disabled { cursor: not-allowed; }
+.verification-note { margin: 8px 0 0; color: #93939b; font: 400 10px 'JetBrains Mono', ui-monospace, monospace; }
