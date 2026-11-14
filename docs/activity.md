@@ -8,6 +8,6 @@ flowchart TD
     F -->|No| G[Show error]
     G --> B
     F -->|Yes| H[Call hypergeometric function]
-    H --> I[Compute P(X ≥ k)]
-    I --> J[Display probability + bar graph]
+    H --> I[Compute probability of at least k successes]
+    I --> J[Display probability and bar graph]
     J --> K[User can try another calculation]
