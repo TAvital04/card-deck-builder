@@ -1,5 +1,3 @@
-# COP 4331 Card Deck Builder – Timeline
-
 ```mermaid
 gantt
     title Hot Potato Project Timeline
@@ -8,14 +6,15 @@ gantt
 
     section DevOps (Tal)
     Scaffolding & CI           :done,    t1, 2026-10-29, 1d
+    Production Deploy          :         t10, after t9, 3d
 
     section Database (Michael)
     Models & Connection        :done,    t2, 2026-10-29, 1d
-    Seeder                     :active,  t6, 2026-11-06, 2d
+    Seeder                     :done,    t6, 2026-11-06, 1d
 
     section API (Toricelli)
     Math Engine & Auth         :done,    t3, 2026-11-03, 2d
-    CRUD & Search              :         t7, after t6, 3d
+    CRUD & Search API          :active,  t7, 2026-11-10, 4d
 
     section Frontend (An)
     Scaffold & Auth UI         :done,    t4, 2026-11-04, 5d
@@ -24,6 +23,3 @@ gantt
     section Mobile (Andres)
     Flutter Scaffold           :         t5, after t4, 2d
     Mobile Screens             :         t9, after t8, 3d
-
-    section DevOps (Tal)
-    Production Deploy          :         t10, after t9, 3d
