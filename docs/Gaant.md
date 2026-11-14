@@ -11,6 +11,7 @@ gantt
     section Database (Michael)
     Models & Connection        :done,    t2, 2026-10-29, 1d
     Seeder                     :done,    t6, 2026-11-06, 1d
+    Gantt, ERD & Diagrams      :done,    docs, 2026-11-14, 1d
 
     section API (Toricelli)
     Math Engine & Auth         :done,    t3, 2026-11-03, 2d
@@ -23,6 +24,3 @@ gantt
     section Mobile (Andres)
     Flutter Scaffold           :         t5, after t4, 2d
     Mobile Screens             :         t9, after t8, 3d
-
-    section Documentation (Michael)
-    Gantt, ERD & Diagrams      :done,    docs, 2026-11-14, 1d
