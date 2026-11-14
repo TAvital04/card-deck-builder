@@ -1,9 +1,3 @@
-### 3. Sequence Diagram — `docs/sequence.md`  
-(Example: user logs in and views decks)
-
-```markdown
-# Sequence Diagram – Login & View Decks
-
 ```mermaid
 sequenceDiagram
     actor User
