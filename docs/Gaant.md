@@ -17,3 +17,6 @@ gantt
 
     section Frontend An
     Scaffold and Auth UI         :done, t4, 2026-11-04, 5d
+
+    section Mobile Andres
+    No commits yet               :milestone, andres, 2026-11-14, 0d
