@@ -1,9 +1,3 @@
-### 2. Activity Diagram — `docs/activity.md`  
-(Example: calculating a single-card probability)
-
-```markdown
-# Activity Diagram – Probability Calculation
-
 ```mermaid
 flowchart TD
     A[User opens Probability Calculator] --> B[Enter deck size N]
