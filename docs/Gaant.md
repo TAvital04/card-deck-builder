@@ -23,3 +23,6 @@ gantt
     section Mobile (Andres)
     Flutter Scaffold           :         t5, after t4, 2d
     Mobile Screens             :         t9, after t8, 3d
+
+    section Documentation (Michael)
+    Gantt, ERD & Diagrams      :done,    docs, 2026-11-14, 1d
