@@ -11,7 +11,7 @@ gantt
     section Database Michael
     Models and Connection        :done, t2, 2026-10-29, 1d
     Seeder                       :done, t6, 2026-11-06, 1d
-    Gantt ERD Diagrams           :done, docs, 2026-11-14, 1d
+    Docs(Gaant,ERD,Diagrams)           :done, docs, 2026-11-14, 1d
 
     section API Toricelli
     Math Engine and Auth         :done, t3, 2026-11-03, 2d
