@@ -1,13 +1,13 @@
 ```mermaid
 flowchart TD
-    A[User opens Probability Calculator] --> B[Enter deck size N]
-    B --> C[Enter copies of target card K]
+    A[Open Calculator] --> B[Enter deck size N]
+    B --> C[Enter copies K]
     C --> D[Enter cards drawn n]
-    D --> E[Enter desired successes k]
+    D --> E[Enter successes k]
     E --> F{Valid numbers?}
     F -->|No| G[Show error]
     G --> B
-    F -->|Yes| H[Call hypergeometric function]
-    H --> I[Compute probability of at least k successes]
-    I --> J[Display probability and bar graph]
-    J --> K[User can try another calculation]
+    F -->|Yes| H[Call hypergeometric]
+    H --> I[Compute P at least k]
+    I --> J[Show probability + graph]
+    J --> K[Try again?]
