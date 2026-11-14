@@ -1,6 +1,6 @@
 ```mermaid
 gantt
-    title Hot Potato Project Timeline (Completed Work)
+    title Card Deck Builder Timeline
     dateFormat  YYYY-MM-DD
     axisFormat  %b %d
 
