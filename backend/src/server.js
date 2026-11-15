@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
+const connectDB = require('./config/db');
 const swaggerDocument = require('./docs/swagger.json');
 
 const authRoutes = require('./routes/authRoutes');
@@ -29,6 +30,7 @@ app.use('/api/decks', deckRoutes);
 app.use('/api/calc', calcRoutes);
 
 if (require.main === module) {
+  connectDB();
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
