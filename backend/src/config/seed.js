@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Deck = require('../models/Deck');
-require('dotenv').config();
+
+const Card = mongoose.models.Card || mongoose.model('Card', new mongoose.Schema({ name: String }, { strict: false }));
 
 const seed = async () => {
   try {
@@ -12,15 +12,13 @@ const seed = async () => {
     // Clear existing
     await User.deleteMany({});
     await Deck.deleteMany({});
+    await Card.deleteMany({});
 
-    // Create demo user
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('password123', salt);
-
+    // Create demo user (User.js pre-save hook hashes password123)
     const demoUser = await User.create({
       name: 'Demo User',
       email: 'demouser@ucf.edu',
-      password: hashedPassword,
+      password: 'password123',
       isVerified: true,
     });
 
@@ -86,6 +84,11 @@ const seed = async () => {
     });
 
     console.log('Mono Red Aggro deck created');
+
+    await Card.insertMany([
+      ...brandedDespiaCards.map(({ name, category, role }) => ({ name, game: 'Yu-Gi-Oh!', category, role })),
+      ...monoRedCards.map(({ name, category, role }) => ({ name, game: 'MTG', category, role })),
+    ]);
     console.log('Seeding complete!');
     process.exit(0);
   } catch (err) {
