@@ -12,6 +12,33 @@ const STRICT_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
  * Returns true if the email was sent, or false if SMTP credentials are not configured.
  */
 async function sendAuthEmail({ to, subject, code, actionLabel }) {
+  const text = `Your Card Deck Builder ${actionLabel} code is: ${code}\n\nEnter this code in the app to continue.`;
+  const html = `
+    <div style="font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; border: 1px solid #e5e5e5; border-radius: 12px;">
+      <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #666; margin: 0 0 8px;">Card Deck Builder</p>
+      <h2 style="margin: 0 0 12px; color: #111;">${subject}</h2>
+      <p style="color: #444; line-height: 1.5;">Use the ${actionLabel} code below to complete your request:</p>
+      <div style="margin: 20px 0; padding: 16px; background: #f5f5f4; border-radius: 8px; text-align: center; font-family: monospace; font-size: 24px; font-weight: 700; letter-spacing: 0.18em; color: #111;">
+        ${code}
+      </div>
+      <p style="font-size: 13px; color: #666;">If you did not request this email, you can safely ignore it.</p>
+    </div>
+  `;
+
+  // 1. HTTPS Email Relay (bypasses DigitalOcean's outbound port 587 SMTP block)
+  if (process.env.EMAIL_WEBHOOK_URL) {
+    const response = await fetch(process.env.EMAIL_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, text, html, code }),
+    });
+    if (!response.ok) {
+      throw new Error(`Email webhook returned HTTP ${response.status}`);
+    }
+    return true;
+  }
+
+  // 2. Standard Nodemailer SMTP (for localhost or unblocked networks)
   const user = process.env.SMTP_USER || process.env.EMAIL_USER;
   const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
 
@@ -24,24 +51,16 @@ async function sendAuthEmail({ to, subject, code, actionLabel }) {
     port: Number(process.env.SMTP_PORT || 587),
     secure: Number(process.env.SMTP_PORT) === 465,
     auth: { user, pass },
+    connectionTimeout: 4000,
+    greetingTimeout: 4000,
   });
 
   await transporter.sendMail({
     from: process.env.SMTP_FROM || `"Card Deck Builder" <${user}>`,
     to,
     subject,
-    text: `Your Card Deck Builder ${actionLabel} code is: ${code}\n\nEnter this code in the app to continue.`,
-    html: `
-      <div style="font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; border: 1px solid #e5e5e5; border-radius: 12px;">
-        <p style="font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #666; margin: 0 0 8px;">Card Deck Builder</p>
-        <h2 style="margin: 0 0 12px; color: #111;">${subject}</h2>
-        <p style="color: #444; line-height: 1.5;">Use the ${actionLabel} code below to complete your request:</p>
-        <div style="margin: 20px 0; padding: 16px; background: #f5f5f4; border-radius: 8px; text-align: center; font-family: monospace; font-size: 24px; font-weight: 700; letter-spacing: 0.18em; color: #111;">
-          ${code}
-        </div>
-        <p style="font-size: 13px; color: #666;">If you did not request this email, you can safely ignore it.</p>
-      </div>
-    `,
+    text,
+    html,
   });
 
   return true;
@@ -89,7 +108,7 @@ async function register(req, res) {
     }
 
     const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) {
+    if (existingUser && existingUser.isVerified) {
       return res.status(409).json({
         success: false,
         message: 'An account with this email already exists.',
@@ -98,13 +117,21 @@ async function register(req, res) {
 
     const verificationToken = crypto.randomBytes(3).toString('hex').toUpperCase();
 
-    const user = await User.create({
-      name: String(name).trim(),
-      email: normalizedEmail,
-      password,
-      isVerified: false,
-      verificationToken,
-    });
+    let user;
+    if (existingUser) {
+      existingUser.name = String(name).trim();
+      existingUser.password = password;
+      existingUser.verificationToken = verificationToken;
+      user = await existingUser.save();
+    } else {
+      user = await User.create({
+        name: String(name).trim(),
+        email: normalizedEmail,
+        password,
+        isVerified: false,
+        verificationToken,
+      });
+    }
 
     let emailSent = false;
     try {
