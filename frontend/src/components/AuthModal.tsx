@@ -168,11 +168,9 @@ export default function AuthModal({
           setPassword('');
           setConfirmPassword('');
           setMode('verify');
-          // The supplied backend returns a verification token in its JSON
-          // response but does not send email. Pre-fill ONLY in Vite dev mode.
-          if (import.meta.env.DEV && response.verificationToken) {
+          if (response.verificationToken) {
             setVerificationToken(response.verificationToken);
-            setNotice('Local demo: the backend returned a verification token (pre-filled). No email was sent.');
+            setNotice('Verification code generated and pre-filled below.');
           } else {
             setNotice('Account created. Enter the verification code when provided by your backend email service.');
           }
@@ -188,9 +186,9 @@ export default function AuthModal({
         case 'forgot': {
           const response = await authApi.forgotPassword(cleanEmail);
           setMode('reset');
-          if (import.meta.env.DEV && response.resetToken) {
+          if (response.resetToken) {
             setResetToken(response.resetToken);
-            setNotice('Local demo: the backend returned a reset token (pre-filled). No email was sent.');
+            setNotice('Password reset token generated and pre-filled below.');
           } else {
             setNotice('Reset requested. Enter the token provided by your backend email service.');
           }
