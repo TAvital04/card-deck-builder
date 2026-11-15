@@ -4,6 +4,10 @@ const swaggerUi = require('swagger-ui-express');
 const connectDB = require('./config/db');
 const swaggerDocument = require('./docs/swagger.json');
 
+if (typeof process.loadEnvFile === 'function') {
+  try { process.loadEnvFile(); } catch { /* Optional .env file */ }
+}
+
 const authRoutes = require('./routes/authRoutes');
 const cardRoutes = require('./routes/cardRoutes');
 const deckRoutes = require('./routes/deckRoutes');

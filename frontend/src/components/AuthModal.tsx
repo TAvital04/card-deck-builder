@@ -172,7 +172,8 @@ export default function AuthModal({
             setVerificationToken(response.verificationToken);
             setNotice('Verification code generated and pre-filled below.');
           } else {
-            setNotice('Account created. Enter the verification code when provided by your backend email service.');
+            setVerificationToken('');
+            setNotice('Account created! Check your email inbox for your 6-character verification code.');
           }
           break;
         }
@@ -190,7 +191,8 @@ export default function AuthModal({
             setResetToken(response.resetToken);
             setNotice('Password reset token generated and pre-filled below.');
           } else {
-            setNotice('Reset requested. Enter the token provided by your backend email service.');
+            setResetToken('');
+            setNotice('Check your email inbox for your 6-character password reset code.');
           }
           break;
         }
