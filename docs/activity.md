@@ -1,5 +1,5 @@
 ```mermaid
-flowchart TD
+flowchart LR
     A[Open Calculator] --> B[Enter deck size N]
     B --> C[Enter copies K]
     C --> D[Enter cards drawn n]
