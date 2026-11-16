@@ -1,3 +1,5 @@
+# COP 4331 Card Deck Builder – Timeline
+
 ```mermaid
 gantt
     title Card Deck Builder Timeline
@@ -19,4 +21,5 @@ gantt
     Scaffold and Auth UI         :done, t4, 2026-11-04, 5d
 
     section Mobile Andres
-    No commits yet               :milestone, andres, 2026-11-14, 0d
+    Flutter Scaffold             :done, t5, 2026-11-15, 1d
+    Mobile Screens               :done, t9, 2026-11-15, 1d
