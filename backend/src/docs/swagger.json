@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/api",
-      "description": "Local Development Server"
+      "url": "http://talavital.com/api",
+      "description": "Live Production Server"
     }
   ],
   "paths": {
@@ -33,6 +33,53 @@
         "summary": "Check API health status",
         "responses": {
           "200": { "description": "API is online" }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "TA Demo" },
+                  "email": { "type": "string", "example": "demo@ucf.edu" },
+                  "password": { "type": "string", "example": "password123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created successfully" },
+          "400": { "description": "Validation error or user exists" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login an existing user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "demo@ucf.edu" },
+                  "password": { "type": "string", "example": "password123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Successful login returns JWT token" },
+          "401": { "description": "Invalid credentials" }
         }
       }
     }
