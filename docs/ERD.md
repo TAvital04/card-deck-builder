@@ -2,6 +2,8 @@
 
 ```mermaid
 erDiagram
+    direction LR
+
     USER ||--o{ DECK : owns
     DECK ||--|{ CARD : contains
 
